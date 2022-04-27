@@ -1,5 +1,6 @@
 package com.moneylion.featureswitch.dao;
 
+import com.moneylion.featureswitch.exceptions.UserNotFoundException;
 import com.moneylion.featureswitch.model.UserFeature;
 import org.springframework.stereotype.Repository;
 
@@ -29,7 +30,7 @@ public class TestFeatureSwitchDataService implements FeatureSwitchDao {
                 .findFirst();
     }
 
-    public boolean setFeatureFlag(String email, String featureName, boolean flag) {
+    public boolean setFeatureFlag(String email, String featureName, boolean flag) throws UserNotFoundException {
         return selectUserByEmail(email).map(user -> {
             if (user.isEnabled(featureName) == flag) {
                 // flag already set - do nothing
@@ -37,13 +38,13 @@ public class TestFeatureSwitchDataService implements FeatureSwitchDao {
             }
             user.addFeature(featureName, flag);
             return true;
-        }).orElse(false);
+        }).orElseThrow(() -> new UserNotFoundException("No such user by that email could be found."));
     }
 
     @Override
-    public boolean getFeatureStatus(String email, String featureName) {
+    public boolean getFeatureStatus(String email, String featureName) throws UserNotFoundException {
         return selectUserByEmail(email).map(user -> {
             return user.isEnabled(featureName);
-        }).orElse(false);
+        }).orElseThrow(() -> new UserNotFoundException("No such user by that email could be found."));
     }
 }

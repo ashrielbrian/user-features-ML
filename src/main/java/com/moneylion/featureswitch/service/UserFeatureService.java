@@ -1,6 +1,7 @@
 package com.moneylion.featureswitch.service;
 
 import com.moneylion.featureswitch.dao.FeatureSwitchDao;
+import com.moneylion.featureswitch.exceptions.UserNotFoundException;
 import com.moneylion.featureswitch.model.FeaturePostBody;
 import com.moneylion.featureswitch.model.UserFeature;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +23,11 @@ public class UserFeatureService {
         return featureSwitchDao.getAllUsers();
     }
 
-    public boolean getFeatureStatus(String email, String featureName) {
+    public boolean getFeatureStatus(String email, String featureName) throws UserNotFoundException {
         return featureSwitchDao.getFeatureStatus(email, featureName);
     }
 
-    public boolean setFeatureFlag(FeaturePostBody featureBody) {
+    public boolean setFeatureFlag(FeaturePostBody featureBody) throws UserNotFoundException {
         return featureSwitchDao.setFeatureFlag(
                 featureBody.email(),
                 featureBody.featureName(),

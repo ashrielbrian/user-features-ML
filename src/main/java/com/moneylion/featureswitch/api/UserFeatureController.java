@@ -1,5 +1,6 @@
 package com.moneylion.featureswitch.api;
 
+import com.moneylion.featureswitch.exceptions.UserNotFoundException;
 import com.moneylion.featureswitch.model.FeaturePostBody;
 import com.moneylion.featureswitch.service.UserFeatureService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,21 +21,29 @@ public class UserFeatureController {
     }
 
     @GetMapping
-    public Map<String, Boolean> getUserFeatures(
+    public ResponseEntity<?> getUserFeatures(
             @RequestParam(name = "email") String email,
             @RequestParam(name = "featureName") String featureName
     ) {
-        boolean canAccess = userFeatureService.getFeatureStatus(email, featureName);
-        return Map.of("canAccess", canAccess);
+        try {
+            boolean canAccess = userFeatureService.getFeatureStatus(email, featureName);
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of("canAccess", canAccess));
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.toString()));
+        }
     }
 
     @PostMapping
     public ResponseEntity<?> toggleUserFeature(@RequestBody FeaturePostBody featureBody) {
-        boolean modified = userFeatureService.setFeatureFlag(featureBody);
-        if (modified) {
-            return ResponseEntity.status(HttpStatus.OK).body(null);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(null);
+        try {
+            boolean modified = userFeatureService.setFeatureFlag(featureBody);
+            if (modified) {
+                return ResponseEntity.status(HttpStatus.OK).body(null);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(null);
+            }
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.toString()));
         }
     }
 
