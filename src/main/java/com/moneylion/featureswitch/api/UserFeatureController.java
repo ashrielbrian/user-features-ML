@@ -1,11 +1,11 @@
 package com.moneylion.featureswitch.api;
 
+import com.moneylion.featureswitch.model.FeaturePostBody;
 import com.moneylion.featureswitch.service.UserFeatureService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -26,6 +26,16 @@ public class UserFeatureController {
     ) {
         boolean canAccess = userFeatureService.getFeatureStatus(email, featureName);
         return Map.of("canAccess", canAccess);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> toggleUserFeature(@RequestBody FeaturePostBody featureBody) {
+        boolean modified = userFeatureService.setFeatureFlag(featureBody);
+        if (modified) {
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(null);
+        }
     }
 
 }

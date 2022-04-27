@@ -11,11 +11,11 @@ public class TestFeatureSwitchDataService implements FeatureSwitchDao {
     private static List<UserFeature> userFeaturesDB = new ArrayList<>(Arrays.asList(
             new UserFeature(
                     "brian@tang.com",
-                    Map.of("tipping", true, "cryptoTransfer", false)
+                    new HashMap<>(Map.of("tipping", true, "cryptoTransfer", false))
             ),
             new UserFeature(
                     "another@test.com",
-                    Map.of("tipping", true, "cryptoTransfer", true)
+                    new HashMap<>(Map.of("tipping", true, "cryptoTransfer", true))
             )
     ));
 
@@ -29,11 +29,15 @@ public class TestFeatureSwitchDataService implements FeatureSwitchDao {
                 .findFirst();
     }
 
-    public void setFeatureFlag(String email, String featureName, boolean flag) {
-        selectUserByEmail(email).map(user -> {
+    public boolean setFeatureFlag(String email, String featureName, boolean flag) {
+        return selectUserByEmail(email).map(user -> {
+            if (user.isEnabled(featureName) == flag) {
+                // flag already set - do nothing
+                return false;
+            }
             user.addFeature(featureName, flag);
-            return 1;
-        }).orElse(0);
+            return true;
+        }).orElse(false);
     }
 
     @Override
