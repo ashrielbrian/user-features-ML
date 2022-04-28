@@ -1,25 +1,53 @@
 package com.moneylion.featureswitch.dao;
 
-import com.moneylion.featureswitch.exceptions.FeatureNotFoundException;
 import com.moneylion.featureswitch.exceptions.UserNotFoundException;
 import com.moneylion.featureswitch.model.UserFeature;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository("postgres")
-public class PostgresFeatureSwitchDao implements FeatureSwitchDao{
+public class FeatureSwitchDataService implements FeatureSwitchDao{
     private final JdbcTemplate jdbcTemplate;
 
-    
+    @Autowired
+    public FeatureSwitchDataService(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     @Override
     public Optional<UserFeature> selectUserByEmail(String email) {
-        String query = "SELECT id FROM user where email = ?";
+        final String query = """
+            WITH usr AS (
+                SELECT uf.user_id, uf.enabled, uf.feature_id
+                FROM "user_feature" AS uf
+                WHERE uf.user_id = (
+                    SELECT id FROM "users" u
+                    WHERE u.email = ?
+                )
+            )
+            SELECT usr.*, f.name as feature_name
+            FROM usr
+            JOIN "features" f
+            ON f.id = usr.feature_id;
+        """;
+        Map<String, Boolean> features = new HashMap<>();
+        jdbcTemplate.query(query, (resultSet) -> {
+            features.put(
+                    resultSet.getString("feature_name"),
+                    resultSet.getBoolean("enabled")
+            );
+        }, email);
 
-        // get the user's id
-        return Optional.empty();
+        if (features.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new UserFeature(email, features));
     }
 
     @Override
@@ -34,18 +62,9 @@ public class PostgresFeatureSwitchDao implements FeatureSwitchDao{
 
     @Override
     public boolean getFeatureStatus(String email, String featureName) throws UserNotFoundException {
-        String query = """
-            SELECT enabled
-            FROM user_feature uf
-            JOIN features f
-            ON f.
-        """;
-        return false;
-    }
-
-    @Override
-    public List<UserFeature> getAllUsers() {
-        String query = "SELECT id, email FROM users;";
-        return List<UserFeature>();
+        Optional<UserFeature> userFeature = selectUserByEmail(email);
+        return userFeature.map(user -> {
+            return user.isEnabled(featureName);
+        }).orElseThrow(() -> new UserNotFoundException("No such user."));
     }
 }

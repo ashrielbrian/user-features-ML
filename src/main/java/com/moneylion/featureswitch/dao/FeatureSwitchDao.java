@@ -11,5 +11,4 @@ public interface FeatureSwitchDao {
     /* Return true if successfully modified. Otherwise, return false. */
     public boolean setFeatureFlag(String email, String featureName, boolean flag) throws UserNotFoundException;
     public boolean getFeatureStatus(String email, String featureName) throws UserNotFoundException;
-    public List<UserFeature> getAllUsers();
 }

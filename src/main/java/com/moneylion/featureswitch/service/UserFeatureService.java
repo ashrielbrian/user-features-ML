@@ -19,10 +19,6 @@ public class UserFeatureService {
         this.featureSwitchDao = featureSwitchDao;
     }
 
-    public List<UserFeature> getAllUsers() {
-        return featureSwitchDao.getAllUsers();
-    }
-
     public boolean getFeatureStatus(String email, String featureName) throws UserNotFoundException {
         return featureSwitchDao.getFeatureStatus(email, featureName);
     }

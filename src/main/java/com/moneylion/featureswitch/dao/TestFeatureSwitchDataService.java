@@ -20,10 +20,6 @@ public class TestFeatureSwitchDataService implements FeatureSwitchDao {
             )
     ));
 
-    public List<UserFeature> getAllUsers() {
-        return userFeaturesDB;
-    }
-
     public Optional<UserFeature> selectUserByEmail(String email) {
         return userFeaturesDB.stream()
                 .filter(user -> user.email().equals(email))
