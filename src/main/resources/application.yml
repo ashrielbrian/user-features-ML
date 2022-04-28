@@ -1,0 +1,7 @@
+app:
+  datasource:
+    jdbc-url: jdbc:postgresql://localhost:5432/featuresdb
+    username: postgres
+    # for simplicity sake - otherwise inject from SecretsManager
+    password:
+    pool-size: 10

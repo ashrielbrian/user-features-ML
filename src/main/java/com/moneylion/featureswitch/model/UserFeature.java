@@ -1,10 +1,11 @@
 package com.moneylion.featureswitch.model;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class UserFeature {
     private final String email;
-    private final Map<String, Boolean> features;
+    private Map<String, Boolean> features;
 
     public UserFeature(String email, Map<String, Boolean> features) {
         this.email = email;
@@ -19,7 +20,7 @@ public class UserFeature {
         return this.features;
     }
 
-    public boolean isEnabled(String feature) {
+    public Boolean isEnabled(String feature) {
         return this.features.get(feature);
     }
 
