@@ -7,8 +7,10 @@ import com.moneylion.featureswitch.service.UserFeatureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Map;
 
 @RequestMapping("/feature")
@@ -23,8 +25,8 @@ public class UserFeatureController {
 
     @GetMapping
     public ResponseEntity<?> getUserFeatures(
-            @RequestParam(name = "email") String email,
-            @RequestParam(name = "featureName") String featureName
+            @NonNull @RequestParam(name = "email") String email,
+            @NonNull @RequestParam(name = "featureName") String featureName
     ) {
         try {
             boolean canAccess = userFeatureService.getFeatureStatus(email, featureName);
@@ -35,7 +37,7 @@ public class UserFeatureController {
     }
 
     @PostMapping
-    public ResponseEntity<?> toggleUserFeature(@RequestBody FeaturePostBody featureBody) {
+    public ResponseEntity<?> toggleUserFeature(@Valid @NonNull @RequestBody FeaturePostBody featureBody) {
         try {
             boolean modified = userFeatureService.setFeatureFlag(featureBody);
             if (modified) {

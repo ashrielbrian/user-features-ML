@@ -1,11 +1,16 @@
 package com.moneylion.featureswitch.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 public class FeaturePostBody {
 
+    @NotBlank
     private final String featureName;
+    @NotBlank
     private final String email;
+    @NotNull
     private final Boolean enable;
 
     public FeaturePostBody(@JsonProperty("featureName") String featureName,
