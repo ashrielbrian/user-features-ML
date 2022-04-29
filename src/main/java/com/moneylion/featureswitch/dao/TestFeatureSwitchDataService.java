@@ -26,7 +26,7 @@ public class TestFeatureSwitchDataService implements FeatureSwitchDao {
                 .findFirst();
     }
 
-    public boolean setFeatureFlag(String email, String featureName, boolean flag) throws UserNotFoundException {
+    public Boolean setFeatureFlag(String email, String featureName, boolean flag) throws UserNotFoundException {
         return selectUserByEmail(email).map(user -> {
             if (user.isEnabled(featureName) == flag) {
                 // flag already set - do nothing
@@ -38,7 +38,7 @@ public class TestFeatureSwitchDataService implements FeatureSwitchDao {
     }
 
     @Override
-    public boolean getFeatureStatus(String email, String featureName) throws UserNotFoundException {
+    public Boolean getFeatureStatus(String email, String featureName) throws UserNotFoundException {
         return selectUserByEmail(email).map(user -> {
             return user.isEnabled(featureName);
         }).orElseThrow(() -> new UserNotFoundException("No such user by that email could be found."));

@@ -1,5 +1,6 @@
 package com.moneylion.featureswitch.dao;
 
+import com.moneylion.featureswitch.exceptions.FeatureNotFoundException;
 import com.moneylion.featureswitch.exceptions.UserNotFoundException;
 import com.moneylion.featureswitch.model.UserFeature;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,20 +52,58 @@ public class FeatureSwitchDataService implements FeatureSwitchDao{
     }
 
     @Override
-    public boolean setFeatureFlag(String email, String featureName, boolean flag) throws UserNotFoundException {
-        String query = "SELECT email, featureName FROM test";
+    public Boolean setFeatureFlag(
+            String email,
+            String featureName,
+            boolean flag
+    ) throws UserNotFoundException, FeatureNotFoundException {
+        String query = """
+            UPDATE user_feature 
+            SET enabled = ? 
+            WHERE user_id = (
+                SELECT id FROM users
+                WHERE email = ?
+            )
+            AND feature_id = (
+                SELECT id FROM features
+                WHERE name = ?
+            )
+        """;
 
         Optional<UserFeature> userFeature = selectUserByEmail(email);
-        return userFeature.map(user -> {
-            return user.isEnabled(featureName);
-        }).orElseThrow(() -> new UserNotFoundException("No such user."));
+        UserFeature user = userFeature.orElseThrow(() -> new UserNotFoundException("No such user."));
+
+        throwIfFeatureNotFound(user, featureName);
+
+        if (user.isEnabled(featureName) == flag) {
+            // no update required to the feature flag
+            return false;
+        }
+
+        jdbcTemplate.update(query, flag, email, featureName);
+        return true;
     }
 
     @Override
-    public boolean getFeatureStatus(String email, String featureName) throws UserNotFoundException {
+    public Boolean getFeatureStatus(
+            String email,
+            String featureName
+    ) throws UserNotFoundException, FeatureNotFoundException {
         Optional<UserFeature> userFeature = selectUserByEmail(email);
-        return userFeature.map(user -> {
-            return user.isEnabled(featureName);
-        }).orElseThrow(() -> new UserNotFoundException("No such user."));
+
+        UserFeature user = userFeature.orElseThrow(() -> new UserNotFoundException("No such user."));
+        throwIfFeatureNotFound(user, featureName);
+
+        return user.isEnabled(featureName);
+    }
+
+    private void throwIfFeatureNotFound(
+            UserFeature user, String featureName
+    ) throws FeatureNotFoundException {
+        if (!user.hasFeature(featureName)) {
+            throw new FeatureNotFoundException(
+                    String.format("User %s has no such feature %s.", user.email(), featureName)
+            );
+        }
     }
 }

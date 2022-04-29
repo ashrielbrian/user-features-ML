@@ -1,5 +1,7 @@
 package com.moneylion.featureswitch.model;
 
+import com.moneylion.featureswitch.exceptions.FeatureNotFoundException;
+
 import java.util.Map;
 import java.util.Optional;
 
@@ -26,5 +28,10 @@ public class UserFeature {
 
     public void addFeature(String featureName, Boolean flag) {
         features.put(featureName, flag);
+    }
+
+    public Boolean hasFeature(String featureName) {
+        Optional<Boolean> inFeatureSet = Optional.ofNullable(features.get(featureName));
+        return inFeatureSet.isPresent();
     }
 }

@@ -1,5 +1,6 @@
 package com.moneylion.featureswitch.api;
 
+import com.moneylion.featureswitch.exceptions.FeatureNotFoundException;
 import com.moneylion.featureswitch.exceptions.UserNotFoundException;
 import com.moneylion.featureswitch.model.FeaturePostBody;
 import com.moneylion.featureswitch.service.UserFeatureService;
@@ -28,8 +29,8 @@ public class UserFeatureController {
         try {
             boolean canAccess = userFeatureService.getFeatureStatus(email, featureName);
             return ResponseEntity.status(HttpStatus.OK).body(Map.of("canAccess", canAccess));
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.toString()));
+        } catch (UserNotFoundException | FeatureNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         }
     }
 
@@ -42,8 +43,8 @@ public class UserFeatureController {
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(null);
             }
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.toString()));
+        } catch (UserNotFoundException | FeatureNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         }
     }
 
