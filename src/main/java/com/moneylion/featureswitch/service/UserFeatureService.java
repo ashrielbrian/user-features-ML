@@ -4,12 +4,9 @@ import com.moneylion.featureswitch.dao.FeatureSwitchDao;
 import com.moneylion.featureswitch.exceptions.FeatureNotFoundException;
 import com.moneylion.featureswitch.exceptions.UserNotFoundException;
 import com.moneylion.featureswitch.model.FeaturePostBody;
-import com.moneylion.featureswitch.model.UserFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UserFeatureService {
@@ -26,9 +23,9 @@ public class UserFeatureService {
 
     public Boolean setFeatureFlag(FeaturePostBody featureBody) throws UserNotFoundException, FeatureNotFoundException {
         return featureSwitchDao.setFeatureFlag(
-                featureBody.email(),
-                featureBody.featureName(),
-                featureBody.enable()
+                featureBody.getEmail(),
+                featureBody.getFeatureName(),
+                featureBody.getEnable()
         );
     }
 

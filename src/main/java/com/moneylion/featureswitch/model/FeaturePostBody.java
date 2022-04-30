@@ -21,13 +21,13 @@ public class FeaturePostBody {
         this.enable = enable;
     }
 
-    public String featureName() {
+    public String getFeatureName() {
         return featureName;
     }
-    public String email() {
+    public String getEmail() {
         return email;
     }
-    public Boolean enable() {
+    public Boolean getEnable() {
         return enable;
     }
 }

@@ -22,7 +22,7 @@ public class TestFeatureSwitchDataService implements FeatureSwitchDao {
 
     public Optional<UserFeature> selectUserByEmail(String email) {
         return userFeaturesDB.stream()
-                .filter(user -> user.email().equals(email))
+                .filter(user -> user.getEmail().equals(email))
                 .findFirst();
     }
 
