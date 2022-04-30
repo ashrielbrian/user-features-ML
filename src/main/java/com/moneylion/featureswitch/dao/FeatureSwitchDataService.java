@@ -54,7 +54,7 @@ public class FeatureSwitchDataService implements FeatureSwitchDao{
     public Boolean setFeatureFlag(
             String email,
             String featureName,
-            boolean flag
+            Boolean flag
     ) throws UserNotFoundException, FeatureNotFoundException {
         String query = """
             UPDATE user_feature 

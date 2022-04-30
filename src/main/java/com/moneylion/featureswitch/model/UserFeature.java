@@ -1,7 +1,5 @@
 package com.moneylion.featureswitch.model;
 
-import com.moneylion.featureswitch.exceptions.FeatureNotFoundException;
-
 import java.util.Map;
 import java.util.Optional;
 
@@ -14,11 +12,11 @@ public class UserFeature {
         this.features = features;
     }
 
-    public String email() {
+    public String getEmail() {
         return this.email;
     }
 
-    public Map<String, Boolean> features() {
+    public Map<String, Boolean> getFeatures() {
         return this.features;
     }
 

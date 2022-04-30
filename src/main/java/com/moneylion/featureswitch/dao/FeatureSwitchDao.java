@@ -9,6 +9,6 @@ import java.util.Optional;
 public interface FeatureSwitchDao {
     public Optional<UserFeature> selectUserByEmail(String email);
     /* Return true if successfully modified. Otherwise, return false. */
-    public Boolean setFeatureFlag(String email, String featureName, boolean flag) throws UserNotFoundException, FeatureNotFoundException;
+    public Boolean setFeatureFlag(String email, String featureName, Boolean flag) throws UserNotFoundException, FeatureNotFoundException;
     public Boolean getFeatureStatus(String email, String featureName) throws UserNotFoundException, FeatureNotFoundException;
 }
