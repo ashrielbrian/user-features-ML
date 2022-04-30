@@ -8,7 +8,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -26,15 +25,15 @@ public class FeatureSwitchDataService implements FeatureSwitchDao{
         final String query = """
             WITH usr AS (
                 SELECT uf.user_id, uf.enabled, uf.feature_id
-                FROM "user_feature" AS uf
+                FROM user_feature AS uf
                 WHERE uf.user_id = (
-                    SELECT id FROM "users" u
+                    SELECT id FROM users u
                     WHERE u.email = ?
                 )
             )
             SELECT usr.*, f.name as feature_name
             FROM usr
-            JOIN "features" f
+            JOIN features f
             ON f.id = usr.feature_id;
         """;
         Map<String, Boolean> features = new HashMap<>();
@@ -102,7 +101,7 @@ public class FeatureSwitchDataService implements FeatureSwitchDao{
     ) throws FeatureNotFoundException {
         if (!user.hasFeature(featureName)) {
             throw new FeatureNotFoundException(
-                    String.format("User %s has no such feature %s.", user.email(), featureName)
+                    String.format("User %s has no such feature %s.", user.getEmail(), featureName)
             );
         }
     }
