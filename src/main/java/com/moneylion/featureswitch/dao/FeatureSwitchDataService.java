@@ -31,7 +31,7 @@ public class FeatureSwitchDataService implements FeatureSwitchDao{
                     WHERE u.email = ?
                 )
             )
-            SELECT usr.*, f.name as feature_name
+            SELECT usr.*, f.name AS feature_name
             FROM usr
             JOIN features f
             ON f.id = usr.feature_id;
